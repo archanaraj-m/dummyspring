@@ -19,8 +19,8 @@ pipeline{
         stage('build') {
             steps {
                 archiveArtifacts artifacts: '**/spring-petclinic/target/spring-petclinic-3.0.0-SNAPSHOT.jar',
-                                onlyIfSuccessful: true
-                                junit testResults: '**/test-*.xml'
+                                 onlyIfSuccessful: true
+                                 junit testResults: '**/test-*.xml'
                 } 
         }
     }
