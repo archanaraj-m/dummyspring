@@ -6,7 +6,10 @@ pipeline {
                 branch:'declarative'
              }
         }
-        stage('package')
+        stage('package'){
+            tools{
+                jdk 'JDK_17_UBUNTU'
+            }
         steps{
             sh 'mvn package'
         }
