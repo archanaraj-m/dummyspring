@@ -8,13 +8,10 @@ pipeline{
                 }
             }
         stage('package'){
-                tools{
-                    jdk 'JDK_17_UBUNTU'
-                }
-            }
             steps{
                 sh 'mvn package'
-            }
+          }
+        }
         stage('build'){
             steps{
                 archiveArtifacts artifacts: '**/spring-petclinic/target/spring-petclinic-3.0.0-SNAPSHOT.jar',
