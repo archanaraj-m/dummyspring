@@ -4,16 +4,19 @@ pipeline{
         stage('vcs'){
             steps{
                 git url: 'https://github.com/archanaraj-m/dummyspring.git',
-                    branch:'declarative'
+                    branch: 'declarative'
                 }
             }
-        stage('package'){
-            steps{
+        stage('package') {
+            tools {
+                jdk 'JDK_17_UBUNTU'
+            }
+            steps {
                 sh 'mvn clean package'
           }
         }
-        stage('build'){
-            steps{
+        stage('build') {
+            steps {
                 archiveArtifacts artifacts: '**/spring-petclinic/target/spring-petclinic-3.0.0-SNAPSHOT.jar',
                                 onlyIfSuccessful: true
                                 junit testResults: '**/test-*.xml'
