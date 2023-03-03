@@ -20,7 +20,7 @@ pipeline{
             steps {
                 archiveArtifacts artifacts: '**/target/spring-petclinic-3.0.0-SNAPSHOT.jar',
                                  onlyIfSuccessful: true
-                                 junit testResults: '**/test-*.xml'
+                                 junit testResults: '**/TEST-*.xml'
                 } 
         }
     }
