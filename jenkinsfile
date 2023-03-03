@@ -13,12 +13,12 @@ pipeline{
                 maven 'MAVEN_3.9.0_UBUNTU'
             }
             steps {
-                sh 'mvn clean package'
+                sh 'mvn package'
           }
         }
-        stage('build') {
+        stage('post-build') {
             steps {
-                archiveArtifacts artifacts: '**/spring-petclinic/target/spring-petclinic-3.0.0-SNAPSHOT.jar',
+                archiveArtifacts artifacts: '**/target/spring-petclinic-3.0.0-SNAPSHOT.jar',
                                  onlyIfSuccessful: true
                                  junit testResults: '**/test-*.xml'
                 } 
