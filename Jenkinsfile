@@ -5,9 +5,10 @@ node('SPC_MAVEN')
             branch: 'scripted'
     }
     stage ('build') {
-        sh 'export PATH="/usr/lib/jvm/java-1.17.0-openjdk-amd64/bin:$PATH" && mvn package'
-            'export MAVEN_HOME=/opt/maven'
-            'export PATH=$PATH:$MAVEN_HOME/bin'
+        sh 'export PATH=/usr/lib/jvm/java-1.17.0-openjdk-amd64/bin:$PATH'
+           'export MAVEN_HOME=/opt/maven'
+           'export PATH=$PATH:$MAVEN_HOME/bin'
+        sh 'mvn package'    
     }
     stage('postbuild') {
         archiveArtifacts artifacts: '**/target/spring-petclinic-3.0.0-SNAPSHOT.jar',
