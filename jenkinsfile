@@ -4,7 +4,7 @@ pipeline{
         stage('vcs'){
             steps{
                 git url: 'https://github.com/archanaraj-m/dummyspring.git',
-                    branch: 'declarative'
+                    branch: 'main'
                 }
             }
         stage('package') {
@@ -12,9 +12,6 @@ pipeline{
                 jdk 'JDK_17_UBUNTU'
                 maven 'MAVEN_3.9.0_UBUNTU'
             }
-            steps {
-                sh 'mvn package'
-          }
         }
         stage ('Build') {
 	        steps {
