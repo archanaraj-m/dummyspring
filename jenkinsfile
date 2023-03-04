@@ -7,14 +7,14 @@ pipeline{
                     branch: 'main'
             }
         }
-        stage('package') {
-            tools {
+        stage('package'){
+            tools{
                 jdk 'JDK_17_UBUNTU'
                 maven 'MAVEN_3.9.0_UBUNTU'
             }
         }
-        stage ('Build') {
-	        steps {
+        stage('Build'){
+	        steps{
 		      sh './gradle build'
 	        }
         }
