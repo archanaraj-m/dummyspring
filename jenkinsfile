@@ -1,0 +1,26 @@
+pipeline{
+    agent{ label 'SPC_MAVEN' }
+    stages{
+        stage('vcs'){
+            steps{
+                git url: 'https://github.com/archanaraj-m/dummyspring.git',
+                    branch: 'declarative'
+                }
+            }
+        stage('package') {
+            tools {
+                jdk 'JDK_17_UBUNTU'
+                maven 'MAVEN_3.9.0_UBUNTU'
+            }
+            steps {
+                sh 'mvn package'
+          }
+        }
+        stage ('Build') {
+	        steps {
+		      sh './gradlew clean build'
+	              }
+        }
+        
+    }
+}
