@@ -1,5 +1,5 @@
 pipeline{
-    agent{ label 'SPC_MAVEN' }
+    agent{ label 'gradle_spc' }
     stages{
         stage('vcs'){
             steps{
@@ -12,7 +12,7 @@ pipeline{
                 jdk 'JDK_17_UBUNTU'
             }
             steps{
-                sh 'mvn -v'
+                sh 'mvn package'
             }
         }
         stage('Build'){
