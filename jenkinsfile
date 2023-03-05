@@ -1,13 +1,14 @@
-pipeline{
+pipeline {
     agent{ label 'grad_spc' }
-    stages{
-        stage('vcs'){
+    stages {
+        stage('vcs') {
             steps{
-                git url: 'https://github.com/archanaraj-m/dummyspring.git',
-                    branch: 'main'
+                git branch: 'main',
+                    url: 'https://github.com/archanaraj-m/dummyspring.git'
+                    
             }
         }
-        stage('package'){
+        stage('package') {
             tools{
                 jdk 'JDK_17_UBUNTU'
             }
