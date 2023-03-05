@@ -1,5 +1,5 @@
 pipeline{
-    agent{ label 'gradle_spc' }
+    agent{ label 'grad_spc' }
     stages{
         stage('vcs'){
             steps{
