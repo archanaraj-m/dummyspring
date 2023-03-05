@@ -5,12 +5,10 @@ node('SPC_MAVEN')
             branch: 'scripted'
     }
     stage('package') {
-        tools {
-            jdk 'JDK_17_UBUNTU'
-            maven 'MAVEN_3.9.0_UBUNTU'
-        } 
-    stage('build') {
-        sh 'mvn package'
+        sh 'export PATH=/usr/lib/jvm/java-1.17.0-openjdk-amd64/bin:$PATH'
+           'export MAVEN_HOME=/opt/maven'
+           'export PATH=$PATH:$MAVEN_HOME/bin'
+        sh 'mvn package' 
         }                       
     }
     stage('postbuild') {
