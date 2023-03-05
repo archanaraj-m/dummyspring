@@ -9,8 +9,8 @@ node('SPC_MAVEN')
             jdk 'JDK_17_UBUNTU'
             maven 'MAVEN_3.9.0_UBUNTU'
         } 
-        steps {
-            sh 'mvn package'
+    stage('build') {
+        sh 'mvn package'
         }                       
     }
     stage('postbuild') {
