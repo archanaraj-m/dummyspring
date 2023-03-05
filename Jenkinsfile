@@ -10,7 +10,6 @@ node('SPC_MAVEN')
            'export PATH=$PATH:$MAVEN_HOME/bin'
         sh 'mvn package' 
         }                       
-    }
     stage('postbuild') {
         archiveArtifacts artifacts: '**/target/spring-petclinic-3.0.0-SNAPSHOT.jar',
                          onlyIfSuccessful: true
