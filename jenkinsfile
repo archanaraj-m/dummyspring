@@ -13,9 +13,6 @@ pipeline {
                 jdk 'JDK_17_UBUNTU'
                 maven 'MAVEN_3.9_UBUNTU'
             }
-            steps{
-                sh 'mvn package'
-            }
         }
         stage('Build'){
 	        steps{
@@ -26,6 +23,9 @@ pipeline {
             steps {
                 archiveArtifacts artifacts: '**/target/spring-petclinic-3.0.0-SNAPSHOT.jar',
                                  onlyIfSuccessful: true
-                                 junit testResults: '**/TEST-*.xml'
+                junit testResults: '**/TEST-*.xml'
+            }
+        }        
+
     }
 }
