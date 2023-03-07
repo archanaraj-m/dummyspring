@@ -2,18 +2,18 @@ pipeline {
     agent{ label 'grad_spc' }
     stages {
         stage('vcs') {
-            steps{
+            steps {
                 git branch: 'main',
                     url: 'https://github.com/archanaraj-m/dummyspring.git'
                     
             }
         }
-        stage ('build') {
+        stage('build') {
             tools{
                 jdk 'JDK_17_UBUNTU'
             }
         }
-	        steps{
+	        steps {
 		      sh 'gradle build'
 	        }
         stage('post-build') {
@@ -21,7 +21,6 @@ pipeline {
                 archiveArtifacts artifacts: '**/target/spring-petclinic-3.0.0-SNAPSHOT.jar',
                                  onlyIfSuccessful: true
                 junit testResults: '**/TEST-*.xml'
-            
             }
         }        
     }  
