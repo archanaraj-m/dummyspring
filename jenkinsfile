@@ -1,27 +1,38 @@
 pipeline {
-    agent{ label 'grad_spc' }
+    agent { label 'MAVEN_JDK8' }
+    triggers { pollSCM ('* * * * *') }
+    parameters {
+        choice(name: 'MAVEN_GOAL', choices: ['package', 'install', 'clean'], description: 'Maven Goal')
+    }
     stages {
         stage('vcs') {
             steps {
-                git branch: 'main',
-                    url: 'https://github.com/archanaraj-m/dummyspring.git'
-                    
+                git url: 'https://github.com/archanaraj-m/dummyspring.git',
+                    branch: 'sonar-declarative'
             }
         }
-        stage('build') {
-            tools{
-                jdk 'JDK_17_UBUNTU'
+        stage('package') {
+            tools {
+                jdk 'JDK_17'
+            }
+            steps {
+                sh 'mvn package'
+                sh "mvn ${params.MAVEN_GOAL}"
             }
         }
-	        steps {
-		      sh 'gradle build'
-	        }
-        stage('post-build') {
+        stage('sonar analysis') {
+            steps {
+                // performing sonarqube analysis with "withSonarQubeENV(<Name of Server configured in Jenkins>)"
+                withSonarQubeEnv('SONAR_CLOUD') {
+                    sh 'mvn verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=prakashreddy_annem -Dsonar.organization=prakashreddy'
+                }
+            }
+        }
+        stage('post build') {
             steps {
                 archiveArtifacts artifacts: '**/target/spring-petclinic-3.0.0-SNAPSHOT.jar',
                                  onlyIfSuccessful: true
-                junit testResults: '**/TEST-*.xml'
+                junit testResults: '**/surefire-reports/TEST-*.xml'
             }
-        }        
-    }  
-}
+        }
+    }
