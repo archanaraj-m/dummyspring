@@ -8,12 +8,11 @@ pipeline {
                     
             }
         }
-        stage ('package') {
+        stage ('build') {
             tools{
                 jdk 'JDK_17_UBUNTU'
             }
         }
-        stage('Build'){
 	        steps{
 		      sh 'gradle build'
 	        }
