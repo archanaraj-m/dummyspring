@@ -4,17 +4,16 @@ pipeline {
         stage('vcs') {
             steps {
                 git branch: 'main',
-                    url: 'https://github.com/archanaraj-m/dummyspring.git'
-                    
+                    url: 'https://github.com/archanaraj-m/dummyspring.git'        
             }
         }
         stage('build') {
-            tools{
+            tools {
                 jdk 'JDK_17_UBUNTU'
             }
         }
 	        steps {
-		      sh 'gradle build'
+		        sh 'gradle build'
 	        }
         stage('post-build') {
             steps {
