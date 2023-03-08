@@ -32,6 +32,8 @@ pipeline {
                 archiveArtifacts artifacts: '**/target/spring-petclinic-3.0.0-SNAPSHOT.jar',
                                  onlyIfSuccessful: true
                 junit testResults: '**/surefire-reports/TEST-*.xml'
+                sh mkdir -p "/tmp/${JOB_NAME}/${BUILD_ID}"
+                CP "./target/spring-petclinic-3.0.0-SNAPSHOT.jar" "/tmp/${JOB_NAME}/${BUILD_ID}"
             }
         }
     }
