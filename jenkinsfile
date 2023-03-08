@@ -19,21 +19,18 @@ pipeline {
                 sh "./mvnw ${params.MAVEN_GOAL}"
             }
         }
-        stage('sonar analysis') {
-            steps {
-                // performing sonarqube analysis with "withSonarQubeENV(<Name of Server configured in Jenkins>)"
-                withSonarQubeEnv('sonar') {
-                    sh ' /opt/maven/bin/mvn verify sonar:sonar -Dsonar.login=dd2ae8429ff2329725487f005646a76ef352ef2d -Dsonar.host.url=https://sonarcloud.io -Dsonar.organization=archanaraj-m -Dsonar.projectKey=archanaraj-m'
-                }
-            }
-        }
         stage('post build') {
             steps {
                 archiveArtifacts artifacts: '**/target/spring-petclinic-3.0.0-SNAPSHOT.jar',
                                  onlyIfSuccessful: true
                 junit testResults: '**/surefire-reports/TEST-*.xml'
+            }
+        }        
+        stage('copy to s3 bucket') {
+            steps {
                 sh mkdir -p "/tmp/${JOB_NAME}/${BUILD_ID}"
-                CP "./target/spring-petclinic-3.0.0-SNAPSHOT.jar" "/tmp/${JOB_NAME}/${BUILD_ID}"
+                CP "./target/spring-petclinic-3.0.0-SNAPSHOT.jar /tmp/${JOB_NAME}/${BUILD_ID}"
+                sh "aws s3 sync /tmp/${sonar-spc-declarative}/${BUILD_ID} s3://archanarajbucket"
             }
         }
     }
