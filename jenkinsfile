@@ -27,8 +27,8 @@ pipeline {
         }        
         stage('copy to s3 bucket') {
             steps {
-                sh mkdir -p "/tmp/${JOB_NAME}/${BUILD_ID}"
-                CP "./target/spring-petclinic-3.0.0-SNAPSHOT.jar /tmp/${JOB_NAME}/${BUILD_ID}"
+                sh "mkdir -p /tmp/${JOB_NAME}/${BUILD_ID}"
+                sh "cp ./target/spring-petclinic-3.0.0-SNAPSHOT.jar /tmp/${JOB_NAME}/${BUILD_ID}"
                 sh "aws s3 sync /tmp/${sonar-spc-declarative}/${BUILD_ID} s3://archanarajbucket"
             }
         }
