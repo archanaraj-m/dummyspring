@@ -1,9 +1,9 @@
 pipeline {
-    agent{ label 'grad_spc' }
+    agent{ label 'bucket' }
     stages {
         stage('vcs') {
             steps {
-                git branch: 'main',
+                git branch: 'gradle',
                     url: 'https://github.com/archanaraj-m/dummyspring.git'        
             }
         }
