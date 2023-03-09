@@ -1,6 +1,6 @@
 pipeline {
-    agent { label 'NEW_NODE' }
-    triggers { pollSCM ('* * * * *') }
+    agent { label 'bucket' }
+    triggers { pollSCM ('0 0 0 5 0 ') }
     parameters {
         choice(name: 'MAVEN_GOAL', choices: ['package', 'install', 'clean'], description: 'Maven Goal')
     }
