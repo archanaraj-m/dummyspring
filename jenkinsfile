@@ -1,5 +1,5 @@
 pipeline {
-    agent{ label 'grad_spc' }
+    agent{ label 'bucket' }
     triggers { pollSCM ('* * * * *') }
     parameters {
         choice(name: 'MAVEN_GOAL', choices: ['package', 'install', 'clean'], description: 'Maven Goal')
