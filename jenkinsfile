@@ -1,5 +1,9 @@
 pipeline {
     agent{ label 'grad_spc' }
+    triggers { pollSCM ('* * * * *') }
+    parameters {
+        choice(name: 'MAVEN_GOAL', choices: ['package', 'install', 'clean'], description: 'Maven Goal')
+    }   
     stages {
         stage('vcs') {
             steps {
@@ -29,21 +33,32 @@ pipeline {
                 )
             }
         }
-        stage('build') {
+        stage('package') {
             tools {
                 jdk 'JDK_17_UBUNTU'
             }
-        }
-	        steps {
-		        sh 'gradle build'
-	        }
-            
+            steps {
+                sh "mvn ${params.MAVEN_GOAL}"
+                rtMavenRun (
+                    tool: 'MAVEN_3.9_UBUNTU',
+                    pom: 'pom.xml',
+                    goals: 'clean install',
+                    deployerId: "MAVEN_DEPLOYER"
+
+                )
+                rtPublishBuildInfo (
+                    serverId: "ARTIFACTORY_SERVER"
+                )
+                //sh "mvn ${params.MAVEN_GOAL}"
+            }
+        } 
+    }      
         stage('post-build') {
             steps {
                 archiveArtifacts artifacts: '**/target/spring-petclinic-3.0.0-SNAPSHOT.jar',
                                  onlyIfSuccessful: true
                 junit testResults: '**/TEST-*.xml'
             }
-        }        
-    }  
-}
+        }    
+}  
+
