@@ -7,6 +7,28 @@ pipeline {
                     url: 'https://github.com/archanaraj-m/dummyspring.git'        
             }
         }
+        stage('Artifectory Configuration') {
+            steps {
+                rtServer (
+                    id : "ARTIFACTORY_SERVER",
+                    url: 'https://archanaraj123.jfrog.io/artifactory',
+                    credentialsId: JFROG_ADMIN
+                )
+                rtMavenDeployer (
+                    id: "MAVEN_DEPLOYER",
+                    serverId: "ARTIFACTORY_SERVER",
+                    releaseRepo: 'libs-release',
+                    snapshotRepo: 'libs-snapshot'
+                )
+
+                rtMavenResolver (
+                    id: "MAVEN_RESOLVER",
+                    serverId: "ARTIFACTORY_SERVER",
+                    releaseRepo: 'libs-release',
+                    snapshotRepo: 'libs-snapshot'
+                )
+            }
+        }
         stage('build') {
             tools {
                 jdk 'JDK_17_UBUNTU'
@@ -15,6 +37,7 @@ pipeline {
 	        steps {
 		        sh 'gradle build'
 	        }
+            
         stage('post-build') {
             steps {
                 archiveArtifacts artifacts: '**/target/spring-petclinic-3.0.0-SNAPSHOT.jar',
