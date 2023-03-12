@@ -1,26 +1,31 @@
 pipeline {
-    agent{ label 'grad_spc' }
+    agent { label 'MAVEN_JDK8' }
+    triggers { pollSCM ('H/30 * * * *') }
+    parameters {
+        string(name: 'MAVEN_GOAL', defaultValue: 'package', description: 'Maven Goal')
+        choice(name: 'MAVEN_GOAL', choices: ['package', 'install', 'clean'], description: 'Maven Goal')
+    }
     stages {
         stage('vcs') {
             steps {
-                git branch: 'main',
-                    url: 'https://github.com/archanaraj-m/dummyspring.git'        
+                git url: 'https://github.com/khajadevopsmarch23/game-of-life.git',
+                    branch: 'declarative'
             }
         }
-        stage('build') {
+        stage('package') {
             tools {
-                jdk 'JDK_17_UBUNTU'
+                jdk 'JDK_8_UBUNTU'
+            }
+            steps {
+                sh "mvn ${params.MAVEN_GOAL}"
             }
         }
-	        steps {
-		        sh 'gradle build'
-	        }
-        stage('post-build') {
+        stage('post build') {
             steps {
-                archiveArtifacts artifacts: '**/target/spring-petclinic-3.0.0-SNAPSHOT.jar',
+                archiveArtifacts artifacts: '**/target/gameoflife.war',
                                  onlyIfSuccessful: true
-                junit testResults: '**/TEST-*.xml'
+                junit testResults: '**/surefire-reports/TEST-*.xml'
             }
-        }        
-    }  
-}
+        }
+    }
+}    
