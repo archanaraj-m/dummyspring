@@ -30,11 +30,6 @@ pipeline {
         }
         stage('deploy in ansible') {
             steps {
-                sh "ansible playbook -i hosts springpetclinc.yml"
-           }        
-        }    
-        stage('deploy in ansible') {
-            steps {
                 sh "ansible-playbook -i hosts ./springpetclinc.yml"
            }        
         }    
