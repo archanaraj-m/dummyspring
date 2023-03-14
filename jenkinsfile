@@ -17,8 +17,7 @@ pipeline {
         }
         stage('archieve artifactory') {
             steps {
-                archiveArtifacts artifacts: '**/spring-petclinic-3.0.0-SNAPSHOT.jar',
-                                 onlyIfSuccessful: true
+                archiveArtifacts artifacts: '**/spring-petclinic-3.0.0-SNAPSHOT.jar'
                 junit testResults: '**/*.xml'
             }
         }        
@@ -26,7 +25,7 @@ pipeline {
             steps {
                 sh "mkdir -p /tmp/${JOB_NAME}/${BUILD_ID}"
                 sh "cp -r **/spring-petclinic-3.0.0-SNAPSHOT.jar /tmp/${JOB_NAME}/${BUILD_ID}"
-                sh "aws s3 sync /tmp/${sonar-spc-declarative}/${BUILD_ID} s3://devbucket9 --acl -public -read -write"
+                sh "aws s3 sync /tmp/${JOB_NAME}/${BUILD_ID} s3://devbucket9 --acl public-read-write"
             }
         }        
     }
