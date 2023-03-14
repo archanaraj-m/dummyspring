@@ -1,13 +1,12 @@
 pipeline {
     agent{ label 'bucket' }
-    triggers { pollSCM ('* * * * *') }
     parameters {
         choice(name: 'MAVEN_GOAL', choices: ['package', 'install', 'clean'], description: 'Maven Goal')
     }   
     stages {
         stage('vcs') {
             steps {
-                git branch: 'main',
+                git branch: 'jfrog',
                     url: 'https://github.com/archanaraj-m/dummyspring.git'        
             }
         }
@@ -49,7 +48,7 @@ pipeline {
                 rtPublishBuildInfo (
                     serverId: "ARTIFACTORY_SERVER"
                 )
-                //sh "mvn ${params.MAVEN_GOAL}"
+                sh "mvn ${params.MAVEN_GOAL}"
             }
         }    
         stage('post-build') {
