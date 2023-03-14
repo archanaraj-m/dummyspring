@@ -28,10 +28,5 @@ pipeline {
                 sh "aws s3 sync /tmp/${JOB_NAME}/${BUILD_ID} s3://devbucket9 --acl public-read-write"
             }
         }
-        stage('deploy in ansible') {
-            steps {
-                sh "ansible playbook -i hosts springpetclinc.yml"
-           }        
-        }    
     }
 }    
