@@ -10,7 +10,7 @@
     - name: copy the service file
       copy:
         src: spc.service
-        dest: /etc/system/systemd/spc.service
+        dest: /etc/systemd/system/spc.service
         mode: "777"
     - name: daemon reload
       systemd:
