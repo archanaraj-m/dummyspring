@@ -37,7 +37,6 @@ pipeline {
                 jdk 'JDK_17_UBUNTU'
             }
             steps {
-                sh "mvn ${params.MAVEN_GOAL}"
                 rtMavenRun (
                     tool: 'MAVEN_3.9_UBUNTU',
                     pom: 'pom.xml',
@@ -48,7 +47,6 @@ pipeline {
                 rtPublishBuildInfo (
                     serverId: "ARTIFACTORY_SERVER"
                 )
-                sh "mvn ${params.MAVEN_GOAL}"
             }
         }    
         stage('post-build') {
