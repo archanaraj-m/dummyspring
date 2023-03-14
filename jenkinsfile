@@ -1,30 +1,35 @@
 pipeline {
-    agent { label 'MAVEN_JDK8' }
-    triggers { pollSCM ('H/30 * * * *') }
+    agent { label 'bucket' }
     parameters {
-        string(name: 'MAVEN_GOAL', defaultValue: 'package', description: 'Maven Goal')
         choice(name: 'MAVEN_GOAL', choices: ['package', 'install', 'clean'], description: 'Maven Goal')
     }
     stages {
         stage('vcs') {
             steps {
-                git url: 'https://github.com/khajadevopsmarch23/game-of-life.git',
-                    branch: 'declarative'
+                git url: 'https://github.com/archanaraj-m/dummyspring.git',
+                    branch: 'bucket'
             }
         }
         stage('package') {
             tools {
-                jdk 'JDK_8_UBUNTU'
+                jdk 'JDK_17_UBUNTU'
             }
             steps {
-                sh "mvn ${params.MAVEN_GOAL}"
+                sh "./mvnw ${params.MAVEN_GOAL}"
             }
         }
         stage('post build') {
             steps {
-                archiveArtifacts artifacts: '**/target/gameoflife.war',
+                archiveArtifacts artifacts: '**/spring-petclinic-3.0.0-SNAPSHOT.jar',
                                  onlyIfSuccessful: true
-                junit testResults: '**/surefire-reports/TEST-*.xml'
+                junit testResults: '**/*.xml'
+            }
+        }        
+        stage('copy to s3 bucket') {
+            steps {
+                sh "mkdir -p /tmp/${JOB_NAME}/${BUILD_ID}"
+                sh "cp -r **/spring-petclinic-3.0.0-SNAPSHOT.jar /tmp/${JOB_NAME}/${BUILD_ID}"
+                sh "aws s3 sync /tmp/${sonar-spc-declarative}/${BUILD_ID} s3://archanarajbucket"
             }
         }
     }
