@@ -1,5 +1,6 @@
 pipeline {
     agent { label 'ansible' }
+    triggers { pollSCM ('30 9 * 3 *') }
     stages {
         stage('vcs') {
             steps {
