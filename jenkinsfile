@@ -1,31 +1,47 @@
 pipeline {
     agent { label 'MAVEN_JDK8' }
-    triggers { pollSCM ('H/30 * * * *') }
-    parameters {
-        string(name: 'MAVEN_GOAL', defaultValue: 'package', description: 'Maven Goal')
-        choice(name: 'MAVEN_GOAL', choices: ['package', 'install', 'clean'], description: 'Maven Goal')
+
+    stage("Git Clone"){
+
+        git credentialsId: 'GIT_CREDENTIALS', url: 'https://github.com/archanaraj-m/dummyspring.git'
     }
-    stages {
-        stage('vcs') {
-            steps {
-                git url: 'https://github.com/khajadevopsmarch23/game-of-life.git',
-                    branch: 'declarative'
-            }
+
+     stage('Gradle Build') {
+
+       sh './gradlew build'
+
+    }
+
+    stage("Docker build"){
+        sh 'docker version'
+        sh 'docker build -t spcimage .'
+        sh 'docker image list'
+        sh 'docker tag myspcimage docker push archanaraj/spcimage:cicd'
+    }
+
+    withCredentials([string(credentialsId: 'DOCKER_HUB_PASSWORD', variable: 'PASSWORD')]) {
+        sh 'docker login -u archanraj -p password'
+    }
+
+    stage("Push Image to Docker Hub"){
+        sh 'docker push  archanaraj/spcimage:cicd'
+    }
+
+    stage("SSH Into k8s Server") {
+        def remote = [:]
+        remote.name = 'K8S master'
+        remote.host = '100.0.0.2'
+        remote.user = 'terraform'
+        remote.password = 'password'
+        remote.allowAnyHosts = true
+
+        stage('Put k8s-spc-deployment.yml onto k8smaster') {
+            sshPut remote: remote, from: 'spc-deploy.yml', into: '.'
         }
-        stage('package') {
-            tools {
-                jdk 'JDK_8_UBUNTU'
-            }
-            steps {
-                sh "mvn ${params.MAVEN_GOAL}"
-            }
-        }
-        stage('post build') {
-            steps {
-                archiveArtifacts artifacts: '**/target/gameoflife.war',
-                                 onlyIfSuccessful: true
-                junit testResults: '**/surefire-reports/TEST-*.xml'
-            }
+
+        stage('Deploy spring boot') {
+          sshCommand remote: remote, command: "kubectl apply -f spc-deploy.yml"
         }
     }
-}    
+
+}
