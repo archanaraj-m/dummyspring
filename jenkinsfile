@@ -1,5 +1,5 @@
 pipeline {
-    agent { label 'bucket' }
+    agent { label 'cicd' }
     triggers { pollSCM ('30 9 * 3 *') }
     parameters {
         choice(name: 'MAVEN_GOAL', choices: ['package', 'install', 'clean'], description: 'Maven Goal')
