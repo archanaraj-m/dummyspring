@@ -27,15 +27,19 @@ pipeline {
             }
         } 
         stage("Docker build"){
-        sh 'docker build -t spcimage .'
-        sh 'docker image list'
-        sh 'docker image tag spcimage archanaraj/spcimage:$BUILD_NUMBER'
-        sh 'docker image push archanaraj/spcimage:${BUILD_NUMBER}'
+            steps { 
+                sh 'docker build -t spcimage .'
+                sh 'docker image list'
+                sh 'docker image tag spcimage archanaraj/spcimage:$BUILD_NUMBER'
+                sh 'docker image push archanaraj/spcimage:${BUILD_NUMBER}'
+            }
         } 
        // withCredentials([string(credentialsId: 'DOCKER_HUB_PASSWORD', variable: 'PASSWORD')]) {
        // sh 'docker login -u archanraj -p password'
         stage("Push Image to Docker Hub"){
-        sh 'docker image push  archanaraj/spcimage:${BUILD_NUMBER}'      
+            steps {
+                sh 'docker image push  archanaraj/spcimage:${BUILD_NUMBER}'      
+            }
         }
         stage('k8s deploy') {
             steps {
