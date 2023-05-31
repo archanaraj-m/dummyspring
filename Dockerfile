@@ -17,4 +17,3 @@ WORKDIR ${HOME_DIR}
 COPY --from=builder /spring-petclinic/target/spring-*.jar ${HOME_DIR}/spring-petclinic.jar
 EXPOSE 8080
 CMD ["java", "-jar", "spring-petclinic.jar"]
-COPY kubectl /bin/kubectl 
