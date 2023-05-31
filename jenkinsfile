@@ -1,6 +1,6 @@
 pipeline {
     agent { label 'cicd' }
-    triggers { pollSCM ('30 9 * 3 *') }
+    //triggers { pollSCM ('* * * * *') }
     parameters {
         choice(name: 'MAVEN_GOAL', choices: ['package', 'install', 'clean'], description: 'Maven Goal')
     }
@@ -8,29 +8,39 @@ pipeline {
         stage('vcs') {
             steps {
                 git url: 'https://github.com/archanaraj-m/dummyspring.git',
-                    branch: 'bucket'
+                    branch: 'cicd'
             }
         }
         stage('package') {
-            tools {
-                jdk 'JDK_17_UBUNTU'
-            }
+            //tools {
+            //   jdk 'JDK_17_UBUNTU'
+            //}
             steps {
                 sh "./mvnw ${params.MAVEN_GOAL}"
             }
         }
-        stage('post build') {
+        stage('junit') {
             steps {
                 archiveArtifacts artifacts: '**/spring-petclinic-3.0.0-SNAPSHOT.jar',
                                  onlyIfSuccessful: true
                 junit testResults: '**/*.xml'
             }
-        }        
-        stage('copy to s3 bucket') {
+        } 
+        stage("Docker build"){
+        sh 'docker build -t spcimage .'
+        sh 'docker image list'
+        sh 'docker image tag spcimage archanaraj/spcimage:$BUILD_NUMBER'
+        sh 'docker image push archanaraj/spcimage:${BUILD_NUMBER}'
+        } 
+       // withCredentials([string(credentialsId: 'DOCKER_HUB_PASSWORD', variable: 'PASSWORD')]) {
+       // sh 'docker login -u archanraj -p password'
+        stage("Push Image to Docker Hub"){
+        sh 'docker image push  archanaraj/spcimage:${BUILD_NUMBER}'      
+        }
+        stage('k8s deploy') {
             steps {
-                sh "mkdir -p /tmp/${JOB_NAME}/${BUILD_ID}"
-                sh "cp -r **/spring-petclinic-3.0.0-SNAPSHOT.jar /tmp/${JOB_NAME}/${BUILD_ID}"
-                sh "aws s3 sync /tmp/${sonar-spc-declarative}/${BUILD_ID} s3://archanarajbucket"
+                sh 'kubectl apply -f spc.yml'
+                sh 'kubectl get all'
             }
         }
     }
