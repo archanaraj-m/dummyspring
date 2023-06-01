@@ -1,9 +1,6 @@
 pipeline {
     agent 'any'
     //triggers { pollSCM ('* * * * *') }
-    parameters {
-        choice(name: 'MAVEN_GOAL', choices: ['package', 'install', 'clean'], description: 'Maven Goal')
-    }
     stages {
         stage('vcs') {
             steps {
@@ -15,10 +12,10 @@ pipeline {
             //tools {
             //   jdk 'JDK_17_UBUNTU'
             //}
-            steps {
-                sh "./mvnw ${params.MAVEN_GOAL}"
-            }
-        }
+	        steps {
+		        sh 'gradle build'
+	        }
+        }    
         stage('junit') {
             steps {
                 archiveArtifacts artifacts: '**/spring-petclinic-3.0.0-SNAPSHOT.jar',

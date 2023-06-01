@@ -2,14 +2,14 @@ FROM alpine/git AS vcs
 RUN cd / && git clone https://github.com/spring-projects/spring-petclinic.git && \
     pwd && ls /spring-petclinic
 
-FROM maven:3-amazoncorretto-17 AS builder
+FROM gradle:5.2.1-jdk8-alpine AS r6eve
 COPY --from=vcs /spring-petclinic /spring-petclinic
 RUN ls /spring-petclinic 
-RUN cd /spring-petclinic && mvn package
+RUN cd /spring-petclinic && gradle build
 
 
 
-FROM amazoncorretto:17-alpine-jdk
+FROM gradle:5.2.1-jdk8-alpine
 LABEL author="archana"
 EXPOSE 8080
 ARG HOME_DIR=/spc
